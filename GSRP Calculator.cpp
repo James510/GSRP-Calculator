@@ -6,16 +6,18 @@
 using namespace std;
 void declareShips (int[],int,int[],int);
 void importShips (int[],int&,int[],int&);
-void declareEconomy(int[])
-void importEconomy(int[])
+void declareEconomy(int[]);
+void importEconomy(int[]);
 void attackRoller();
 void economyCalc();
 void errorCheck(int&);
 void errorCheck(char&,char,char);
 void exitProg();
+void firstTimeInstallation();
 int main()
 {
 	int ch;
+	firstTimeInstallation();
 	while(true)
 	{
 		cout << "\n------------------------------------"	
@@ -45,13 +47,13 @@ void economyCalc()
 	double pp, gs, pop,mod,cur,conv;
 	ofstream outEconomy;
 	ifstream inEconomy;
-	outEconomy.open("EconomyLog.txt",ios::app)
+	outEconomy.open("EconomyLog.txt",ios::app);
 	while(true)
 	{
 		cout << "\n------------------------------------"
 			 << "\n1) Project Points Calculator"
 			 << "\n2) Tax Calculator"
-			 << "\n3) Currency Conversion"
+		   	 << "\n3) Currency Conversion"
 			 << "\n4) Exit"
 			 << "\n\nPlease Make Your Selection :: ";
 		cin >> ch;
@@ -279,6 +281,38 @@ void attackRoller()
     }while(ans =='y'||ans=='Y');
 }
 
+void firstTimeInstallation()
+{
+ 	ofstream outLog,outRedShips,outBlueShips,outEconomy;
+    ifstream inLog,inRedShips,inBlueShips,inEconomy;
+    
+	inLog.open("BattleLog.txt");
+    if(inLog.fail())
+    {
+        outLog.open("BattleLog.txt");
+        //outLog.close();
+	}
+    inRedShips.open("RedList.txt");
+    if(inRedShips.fail())
+    {
+        outRedShips.open("RedList.txt");
+        //outRedShips.close();
+	}
+    inBlueShips.open("BlueList.txt");
+    if(inBlueShips.fail())
+    {
+        outBlueShips.open("BlueList.txt");
+        //outBlueShips.close();
+	}
+    inEconomy.open("EconomyLog.txt");
+    if(inEconomy.fail())
+    {
+        outEconomy.open("EconomyLog.txt");
+        //outEconomy.close();
+	}
+	    
+}
+
 void declareShips(int redShips[],int redNum, int blueShips[],int blueNum)
 {
 	ofstream outRedShips,outBlueShips;
@@ -324,7 +358,14 @@ void importShips (int redShips[],int &redNum,int blueShips[],int &blueNum)
 	}
 }
 
-void declareEconomy(int[]GS)
+void declareEconomy(int temp[])
+{
+
+}
+void importEconomy(int temp[])
+{
+
+}
 
 void errorCheck(int & input)
 {
