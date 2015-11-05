@@ -1,0 +1,8 @@
+
+----------------------
+Red Ship 1Attacks Blue Ship 2
+Accuracy Roll : 3
+Damage Roll : 2
+Evasion Roll : 9
+Defense Roll : 4
+Accuracy Roll Failed
