@@ -21,7 +21,7 @@ int main()
 	while(true)
 	{
 		cout << "\n------------------------------------"	
-			 << "\nGalactic Nations RP Calculators V0.4"
+			 << "\nGalactic Nations RP Calculators V0.5.1"
 			 << "\n1) Economy Calculator"
 			 << "\n2) Battle Calculator"
 			 << "\n3) Exit"
@@ -288,29 +288,16 @@ void firstTimeInstallation()
     
 	inLog.open("BattleLog.txt");
     if(inLog.fail())
-    {
         outLog.open("BattleLog.txt");
-        //outLog.close();
-	}
     inRedShips.open("RedList.txt");
     if(inRedShips.fail())
-    {
         outRedShips.open("RedList.txt");
-        //outRedShips.close();
-	}
     inBlueShips.open("BlueList.txt");
     if(inBlueShips.fail())
-    {
         outBlueShips.open("BlueList.txt");
-        //outBlueShips.close();
-	}
     inEconomy.open("EconomyLog.txt");
     if(inEconomy.fail())
-    {
         outEconomy.open("EconomyLog.txt");
-        //outEconomy.close();
-	}
-	    
 }
 
 void declareShips(int redShips[],int redNum, int blueShips[],int blueNum)
