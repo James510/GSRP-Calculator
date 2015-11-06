@@ -14,17 +14,21 @@ void errorCheck(int&);
 void errorCheck(char&,char,char);
 void exitProg();
 void firstTimeInstallation();
+void systemGen();
+void planetGen();
 int main()
 {
 	int ch;
 	firstTimeInstallation();
+	srand(time(NULL));
 	while(true)
 	{
 		cout << "\n------------------------------------"	
-			 << "\nGalactic Nations RP Calculators V0.5.1"
+			 << "\nGalactic Nations RP Calculators V0.6"
 			 << "\n1) Economy Calculator"
 			 << "\n2) Battle Calculator"
-			 << "\n3) Exit"
+			 << "\n3) System Generator"
+			 << "\n4) Exit"
 			 << "\n\nPlease Make Your Selection :: ";
 		cin >> ch;
 		if(cin.fail())
@@ -34,6 +38,8 @@ int main()
 		else if (ch == 2)
 			attackRoller();
 		else if (ch == 3)
+			systemGen();
+		else if (ch == 4)
 			exitProg();
 		else
 			cout << "Not a Valid Choice";
@@ -102,7 +108,6 @@ void attackRoller()
 		redList[i] = 0;
 	for(int i =0;i<100;i++)
 		blueList[i] = 0;
-    srand(time(NULL));
     ofstream outLog,outRedShips,outBlueShips;
     ifstream inLog,inRedShips,inBlueShips;
     
@@ -281,10 +286,238 @@ void attackRoller()
     }while(ans =='y'||ans=='Y');
 }
 
+void systemGen()
+{
+	int miningCoeff,habitCoeff,planets,habitRoll,habitLimit,planet,gasRoll,moons;
+	double planetMass;
+	habitLimit = 9;
+	ofstream outSys;
+	outSys.open("SystemGen.txt");
+	cout << "\n-------------------"
+		 << "\nGenerating a system";
+	planets = rand()%9+3;
+	cout << "\nThere are " << planets << " planets in this system";
+	outSys << "There are " << planets << " planets in this system";
+	for(int i=1;i<=planets;i++)
+	{
+		habitRoll = rand()%planets+1;
+		miningCoeff = rand()%10;
+		gasRoll = rand()%4;
+		if(habitRoll == 1 && habitLimit > 0)
+		{
+            habitCoeff = rand()%habitLimit+1;
+            planetMass = rand()%2+0.5;
+            moons = rand()%2;
+            cout << "\nPlanet " << i << " is a habitable planet"
+				 << "\nThe Habitable Coefficient is " << habitCoeff
+				 << "\nThe Mining Coefficient is " << miningCoeff
+				 << "\nThe Mass is " << planetMass << " Earths"
+				 << "\nThere are " << moons << " moon(s) of interest." << endl;
+    		outSys << "\nPlanet " << i << " is a habitable planet"
+				 << "\nThe Habitable Coefficient is " << habitCoeff
+				 << "\nThe Mining Coefficient is " << miningCoeff
+				 << "\nThe Mass is " << planetMass << " Earths"
+				 << "\nThere are " << moons << " moon(s) of interest." << endl;
+			planetGen();
+			habitLimit -= habitCoeff;
+		}
+		else if (gasRoll == 1)
+		{
+            moons = rand()%10;
+            planetMass = rand()%396+4;
+            cout << "\nPlanet " << i << " is a uninhabitable gas planet"
+				 << "\nThe Mining Coefficient is " << miningCoeff
+				 << "\nThe Mass is " << planetMass << " Earths"
+				 << "\nThere are " << moons << " moon(s) of interest." << endl;
+			outSys << "\nPlanet " << i << " is a uninhabitable gas planet"
+				   << "\nThe Mining Coefficient is " << miningCoeff
+				   << "\nThe Mass is " << planetMass << " Earths"
+				   << "\nThere are " << moons << " moon(s) of interest." << endl;
+		}
+		else
+		{
+            moons = rand()%2;
+            planetMass = rand()%10+0.1;
+            cout << "\nPlanet " << i << " is a uninhabitable rocky planet"
+				 << "\nThe Mining Coefficient is " << miningCoeff
+				 << "\nThe Mass is " << planetMass << " Earths"
+				 << "\nThere are " << moons << " moon(s) of interest." << endl;
+			outSys << "\nPlanet " << i << " is a uninhabitable rocky planet"
+				   << "\nThe Mining Coefficient is " << miningCoeff
+				   << "\nThe Mass is " << planetMass << " Earths"
+				   << "\nThere are " << moons << " moon(s) of interest." << endl;
+				   
+		}
+	}
+}
+
+void planetGen()
+{
+	int rand1,rand2,rand3;
+    ofstream outSys;
+	outSys.open("SystemGen.txt",ios::app);
+	cout << "This planet ";
+	rand1 = rand()% 10;
+	rand2 = rand()% 10;
+	rand3 = rand()% 10;
+	if(rand1==0)
+	{
+		cout << "is barren, ";
+		outSys << "is barren, ";
+	}
+	else if(rand1==1)
+	{
+		cout << "is aquatic, ";
+		outSys << "is aquatic, ";
+	}
+	else if(rand1==2)
+	{
+		cout << "is volcanic, ";
+		outSys << "is volcanic, ";
+	}
+	else if(rand1==3)
+	{
+		cout << "is covered in forests, ";
+		outSys << "is covered in forests, ";
+	}
+	else if(rand1==4)
+	{
+		cout << "is covered in plains, ";
+		outSys << "is covered in plains, ";
+	}
+	else if(rand1==5)
+	{
+		cout << "is covered in snow, ";
+		outSys << "is covered in snow, ";
+	}
+	else if(rand1==6)
+	{
+		cout << "is a tundra, ";
+		outSys << "is a tundra, ";
+	}
+	else if(rand1==7)
+	{
+		cout << "is an artificial planet, ";
+		outSys << "is an artificial planet, ";
+	}
+	else if(rand1==8)
+	{
+		cout << "is radioactive, ";
+		outSys << "is radioactive, ";
+	}
+	else if(rand1==9)
+	{
+		cout << "is covered in archipelagos, ";
+		outSys << "is covered in archipelagos, ";
+	}
+	
+	if(rand2==0)
+	{
+		cout << "populated by giant man eating arachnids, ";
+		outSys << "populated by giant man eating arachnids, ";
+	}
+	else if(rand2==1)
+	{
+		cout << "populated by giant man eating insects, ";
+		outSys << "populated by giant man eating insects, ";
+	}
+	else if(rand2==2)
+	{
+		cout << "populated by voracious man eating plants, ";
+		outSys << "populated by voracious man eating plants, ";
+	}
+	else if(rand2==3)
+	{
+		cout << "populated by various plant life, ";
+		outSys << "populated by various plant life, ";
+	}
+	else if(rand2==4)
+	{
+		cout << "populated heavily by microbial life, ";
+		outSys << "populated heavily by microbial life, ";
+	}
+	else if(rand2==5)
+	{
+		cout << "populated by simple land creatures, ";
+		outSys << "populated by simple land creatures, ";
+	}
+	else if(rand2==6)
+	{
+		cout << "populated by archaic cave-dwelling bi-pedals, ";
+		outSys << "populated by archaic cave-dwelling bi-pedals, ";
+	}
+	else if(rand2==7)
+	{
+		cout << "populated by industrial era intellectuals, ";
+		outSys << "populated by industrial era intellectuals, ";
+	}
+	else if(rand2==8)
+	{
+		cout << "populated by fungi, ";
+		outSys << "populated by fungi, ";
+	}
+	else if(rand2==9)
+	{
+		cout << "populated with self-replicating nano-machines, ";
+		outSys << "populated with self-replicating nano-machines, ";
+	}
+	
+	if(rand3==0)
+	{
+		cout << "and experiences fierce storms." << endl;
+		outSys << "and experiences fierce storms." << endl;
+	}
+	else if(rand3==1)
+	{
+		cout << "and experiences infrequent asteroid bombardment." << endl;
+		outSys << "and experiences infrequent asteroid bombardment." << endl;
+	}
+	else if(rand3==2)
+	{
+		cout << "and experiences a short day cycle." << endl;
+		outSys << "and experiences a short day cycle." << endl;
+	}
+	else if(rand3==3)
+	{
+		cout << "and experiences a long day cycle." << endl;
+		outSys << "and experiences a long day cycle." << endl;
+	}
+	else if(rand3==4)
+	{
+		cout << "and has mind-altering chemicals in the air." << endl;
+		outSys << "and has mind-altering chemicals in the air." << endl;
+	}
+	else if(rand3==5)
+	{
+		cout << "and has mild seasons." << endl;
+		outSys << "and has mild seasons." << endl;
+	}
+	else if(rand3==6)
+	{
+		cout << "and experiences large tsunamis." << endl;
+		outSys << "and experiences large tsunamis." << endl;
+	}
+	else if(rand3==7)
+	{
+		cout << "and has an altar to the precursors." << endl;
+		outSys << "and has an altar to the precursors." << endl;
+	}
+	else if(rand3==8)
+	{
+		cout << "and has ruins of a great civilization." << endl;
+		outSys << "and has ruins of a great civilization." << endl;
+	}
+	else if(rand3==9)
+	{
+		cout << "and has an automated self defense network." << endl;
+		outSys << "and has an automated self defense network." << endl;
+	}
+}
+
 void firstTimeInstallation()
 {
- 	ofstream outLog,outRedShips,outBlueShips,outEconomy;
-    ifstream inLog,inRedShips,inBlueShips,inEconomy;
+ 	ofstream outLog,outRedShips,outBlueShips,outEconomy,outSystem;
+    ifstream inLog,inRedShips,inBlueShips,inEconomy,inSystem;
     
 	inLog.open("BattleLog.txt");
     if(inLog.fail())
@@ -298,6 +531,9 @@ void firstTimeInstallation()
     inEconomy.open("EconomyLog.txt");
     if(inEconomy.fail())
         outEconomy.open("EconomyLog.txt");
+    inSystem.open("SystemGen.txt");
+    if(inSystem.fail())
+        outSystem.open("SystemGen.txt");
 }
 
 void declareShips(int redShips[],int redNum, int blueShips[],int blueNum)
@@ -349,6 +585,7 @@ void declareEconomy(int temp[])
 {
 
 }
+
 void importEconomy(int temp[])
 {
 
