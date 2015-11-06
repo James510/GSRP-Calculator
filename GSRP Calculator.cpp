@@ -382,7 +382,7 @@ void systemGen()
 string systemName()
 {
 	int rand1,randRun;
-	char randFirst;
+	char randFirst,randLet;
 	string name;
 	stringstream ss;
 	randRun = rand()%5+3;
@@ -391,27 +391,23 @@ string systemName()
 	ss >> name;
 	for(int i=0;i<randRun;i++)
 	{
+		
         rand1= rand()%10;
         if(rand1==0)
             name.append("a");
-        if(rand1==1)
+        else if(rand1==1)
             name.append("e");
-        if(rand1==2)
+        else if(rand1==2)
             name.append("i");
-        if(rand1==3)
+        else if(rand1==3)
             name.append("o");
-        if(rand1==4)
+        else if(rand1==4)
             name.append("u");
-        if(rand1==5)
-            name.append("t");
-        if(rand1==6)
-            name.append("m");
-        if(rand1==7)
-            name.append("z");
-        if(rand1==8)
-            name.append("i");
-        if(rand1==9)
-            name.append("p");
+		else
+		{
+            randLet = rand()%25+97;
+            name.append(1,randLet);
+		}
 	}
 	rand1= rand()%10;
     if(rand1==0)
