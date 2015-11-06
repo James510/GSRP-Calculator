@@ -1,13 +1,16 @@
 #include<iostream>
 #include<time.h>
 #include<fstream>
-#include <stdlib.h>
-#include <math.h>
+#include<stdlib.h>
+#include<math.h>
+#include <sstream>
+
 using namespace std;
+
 void declareShips (int[],int,int[],int);
 void importShips (int[],int&,int[],int&);
-void declareEconomy(int[]);
-void importEconomy(int[]);
+void declareEconomy(double[],double,double);
+void importEconomy(double[]);
 void attackRoller();
 void economyCalc();
 void errorCheck(int&);
@@ -16,6 +19,9 @@ void exitProg();
 void firstTimeInstallation();
 void systemGen();
 void planetGen();
+void resetAll();
+string systemName();
+
 int main()
 {
 	int ch;
@@ -24,11 +30,12 @@ int main()
 	while(true)
 	{
 		cout << "\n------------------------------------"	
-			 << "\nGalactic Nations RP Calculators V0.6"
+			 << "\nGalactic Nations RP Calculators V0.7"
 			 << "\n1) Economy Calculator"
 			 << "\n2) Battle Calculator"
 			 << "\n3) System Generator"
-			 << "\n4) Exit"
+			 << "\n4) Reset All Data"
+			 << "\n5) Exit"
 			 << "\n\nPlease Make Your Selection :: ";
 		cin >> ch;
 		if(cin.fail())
@@ -40,6 +47,8 @@ int main()
 		else if (ch == 3)
 			systemGen();
 		else if (ch == 4)
+			resetAll();
+		else if (ch == 5)
 			exitProg();
 		else
 			cout << "Not a Valid Choice";
@@ -50,17 +59,20 @@ int main()
 void economyCalc()
 {
 	int ch;
+	double economy[2];
 	double pp, gs, pop,mod,cur,conv;
 	ofstream outEconomy;
 	ifstream inEconomy;
 	outEconomy.open("EconomyLog.txt",ios::app);
+	importEconomy(economy);
 	while(true)
 	{
 		cout << "\n------------------------------------"
-			 << "\n1) Project Points Calculator"
-			 << "\n2) Tax Calculator"
-		   	 << "\n3) Currency Conversion"
-			 << "\n4) Exit"
+			 << "\n1) Economy Calculator"
+			 << "\n2) Manage Balance"
+			 << "\n3) Show Balance"
+		   	 << "\n4) Currency Conversion"
+			 << "\n5) Exit"
 			 << "\n\nPlease Make Your Selection :: ";
 		cin >> ch;
 		if(ch == 1)
@@ -69,17 +81,30 @@ void economyCalc()
 			cin >> pop;
 			cout << "Enter your modifier (Default is 10) :: ";
 			cin >> mod;
-			pp = pop * mod;
-			cout << "You have " << pp << " Project Points"<<endl;
+			pp = (pop * mod) + economy[0];
+			cout << "You have " << pp << " Project Points this cycle"<<endl;
+			gs = ((pop * 10) / 2) + economy[1];
+			cout << "You have " << gs << " Galactic Standard this cycle"<<endl;
+			declareEconomy(economy,pp,gs);
+			importEconomy(economy);
 		}
 		else if (ch == 2)
 		{
-			cout << "Enter Your Current Population (Billions) :: ";
-			cin >> pop;
-			pp = (round(pop) * 10) / 2;
-			cout << "You have " << pp << " Galactic Standard"<<endl;
+			cout << "Change PP by :: ";
+			cin >> pp;
+			cout << "Change GS by :: ";
+			cin >> gs;
+			pp += economy[0];
+			gs += economy[1];
+			declareEconomy(economy,pp,gs);
+			importEconomy(economy);
 		}
 		else if (ch == 3)
+		{
+			cout << "\nYou have " << economy [0] << " Project Points."
+				 << "\nYou have " << economy [1] << " Galactic Standard.";
+		}
+		else if (ch == 4)
 		{
 			cout << "Enter how many GS you have :: ";
 			cin >> gs;
@@ -88,7 +113,7 @@ void economyCalc()
 			conv = gs * cur;
 			cout << "Your " << gs << " Galactic Standard converts to " << conv << "Local Currency.";
 		}
-		else if (ch == 4)
+		else if (ch == 5)
 		{
 			break;
 		}
@@ -162,7 +187,7 @@ void attackRoller()
 	//cout << endl;//debug
 	//for(int i =0;i<100;i++)//debug
 		//cout << redList[i] << " ";//debug
-    
+
     do
     {
 		 outLog.open("BattleLog.txt",ios::app);
@@ -290,11 +315,15 @@ void systemGen()
 {
 	int miningCoeff,habitCoeff,planets,habitRoll,habitLimit,planet,gasRoll,moons;
 	double planetMass;
+	string name;
 	habitLimit = 9;
 	ofstream outSys;
 	outSys.open("SystemGen.txt");
+	name = systemName();
 	cout << "\n-------------------"
-		 << "\nGenerating a system";
+		 << "\nGenerating a system"
+		 << "\nThe System of " << name;
+	outSys << "\nThe System of " << name;
 	planets = rand()%9+3;
 	cout << "\nThere are " << planets << " planets in this system";
 	outSys << "There are " << planets << " planets in this system";
@@ -346,9 +375,57 @@ void systemGen()
 				   << "\nThe Mining Coefficient is " << miningCoeff
 				   << "\nThe Mass is " << planetMass << " Earths"
 				   << "\nThere are " << moons << " moon(s) of interest." << endl;
-				   
 		}
 	}
+}
+
+string systemName()
+{
+	int rand1,randRun;
+	char randFirst;
+	string name;
+	stringstream ss;
+	randRun = rand()%5+3;
+	randFirst = rand()%25+65;
+	ss << randFirst;
+	ss >> name;
+	for(int i=0;i<randRun;i++)
+	{
+        rand1= rand()%10;
+        if(rand1==0)
+            name.append("a");
+        if(rand1==1)
+            name.append("e");
+        if(rand1==2)
+            name.append("i");
+        if(rand1==3)
+            name.append("o");
+        if(rand1==4)
+            name.append("u");
+        if(rand1==5)
+            name.append("t");
+        if(rand1==6)
+            name.append("m");
+        if(rand1==7)
+            name.append("z");
+        if(rand1==8)
+            name.append("i");
+        if(rand1==9)
+            name.append("p");
+	}
+	rand1= rand()%10;
+    if(rand1==0)
+        name.append(" I ");
+    if(rand1==1)
+        name.append(" II ");
+    if(rand1==2)
+        name.append(" III ");
+    if(rand1==3)
+        name.append(" IV ");
+    if(rand1==4)
+        name.append(" V ");
+	cout << name;
+	return name;
 }
 
 void planetGen()
@@ -581,14 +658,25 @@ void importShips (int redShips[],int &redNum,int blueShips[],int &blueNum)
 	}
 }
 
-void declareEconomy(int temp[])
+void declareEconomy(double ecoList[],double pp, double gs)
 {
-
+	ofstream outEco;
+	outEco.open("EconomyLog.txt");
+	outEco << pp << " " << gs;
 }
 
-void importEconomy(int temp[])
+void importEconomy(double ecoList[])
 {
-
+    double num = 0;
+	int i = 0;
+	ifstream inEco;
+	inEco.open("EconomyLog.txt");
+	while(!inEco.eof())
+	{
+		inEco >> num;
+		ecoList[i] = num;
+		i++;
+	}
 }
 
 void errorCheck(int & input)
@@ -622,9 +710,26 @@ void exitProg()
 	}
 	exit(1);
 }
+
+void resetAll()
+{
+    ofstream outLog,outRedShips,outBlueShips,outEconomy,outSystem;
+	char ans;
+
+	cout << "Are you sure?(Y/N) :: ";
+	cin >> ans;
+	if(ans == 'Y' || ans == 'y')
+	{
+        outLog.open("BattleLog.txt");
+    	outRedShips.open("RedList.txt");
+    	outBlueShips.open("BlueList.txt");
+    	outEconomy.open("EconomyLog.txt");
+    	outSystem.open("SystemGen.txt");
+	}
+}
 /*pseudocode
 Code remembers what ships were involved, adds to array, updates file at end of execution? Done V0.3
-Code reads and writes economy to a master file for record keeping.
+Code reads and writes economy to a master file for record keeping. Done Vol 0.7
 */
 
 //Copyright 2015 Auragon Studios
