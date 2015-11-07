@@ -314,9 +314,10 @@ void attackRoller()
 void systemGen()
 {
 	int miningCoeff,habitCoeff,planets,habitRoll,habitLimit,planet,gasRoll,moons;
-	double planetMass;
+	double planetMass,gasMax,r;
 	string name;
 	habitLimit = 9;
+	gasMax = 1000;
 	ofstream outSys;
 	outSys.open("SystemGen.txt");
 	name = systemName();
@@ -352,8 +353,9 @@ void systemGen()
 		}
 		else if (gasRoll == 1)
 		{
-            moons = rand()%10;
-            planetMass = rand()%396+4;
+            r = ((double)(rand()%101) / 100);
+            planetMass = 8 * (exp (r * (log (gasMax / 8))));
+            moons = rand()%10 + (int)(planetMass / 100);
             cout << "\nPlanet " << i << " is a uninhabitable gas planet"
 				 << "\nThe Mining Coefficient is " << miningCoeff
 				 << "\nThe Mass is " << planetMass << " Earths"
