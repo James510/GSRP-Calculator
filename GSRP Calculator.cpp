@@ -7,20 +7,22 @@
 
 using namespace std;
 
-void declareShips (int[],int,int[],int);
-void importShips (int[],int&,int[],int&);
+void economyCalc();
 void declareEconomy(double[],double,double);
 void importEconomy(double[]);
 void attackRoller();
-void economyCalc();
+void declareShips (int[],int,int[],int);
+void importShips (int[],int&,int[],int&);
+void systemGen();
+string nameGen(bool);
+void planetGen();
+void firstTimeInstallation();
 void errorCheck(int&);
 void errorCheck(char&,char,char);
 void exitProg();
-void firstTimeInstallation();
-void systemGen();
-void planetGen();
+
 void resetAll();
-string systemName();
+
 
 int main()
 {
@@ -30,7 +32,7 @@ int main()
 	while(true)
 	{
 		cout << "\n------------------------------------"	
-			 << "\nGalactic Nations RP Calculators V0.7"
+			 << "\nGalactic Nations RP Calculators V0.8"
 			 << "\n1) Economy Calculator"
 			 << "\n2) Battle Calculator"
 			 << "\n3) System Generator"
@@ -38,6 +40,7 @@ int main()
 			 << "\n5) Exit"
 			 << "\n\nPlease Make Your Selection :: ";
 		cin >> ch;
+		cout << "\n------------------------------------";
 		if(cin.fail())
 			errorCheck(ch);
 		if(ch == 1)
@@ -67,14 +70,14 @@ void economyCalc()
 	importEconomy(economy);
 	while(true)
 	{
-		cout << "\n------------------------------------"
-			 << "\n1) Economy Calculator"
+		cout << "\n1) Economy Calculator"
 			 << "\n2) Manage Balance"
 			 << "\n3) Show Balance"
 		   	 << "\n4) Currency Conversion"
 			 << "\n5) Exit"
 			 << "\n\nPlease Make Your Selection :: ";
 		cin >> ch;
+		cout << "\n------------------------------------";
 		if(ch == 1)
 		{
 			cout << "Enter Your Current Population (Billions) :: ";
@@ -121,6 +124,27 @@ void economyCalc()
 		{
 			cout << "Not a Valid Choice";
 		}
+	}
+}
+
+void declareEconomy(double ecoList[],double pp, double gs)
+{
+	ofstream outEco;
+	outEco.open("EconomyLog.txt");
+	outEco << pp << " " << gs;
+}
+
+void importEconomy(double ecoList[])
+{
+    double num = 0;
+	int i = 0;
+	ifstream inEco;
+	inEco.open("EconomyLog.txt");
+	while(!inEco.eof())
+	{
+		inEco >> num;
+		ecoList[i] = num;
+		i++;
 	}
 }
 
@@ -191,7 +215,6 @@ void attackRoller()
     do
     {
 		 outLog.open("BattleLog.txt",ios::app);
-         cout << "\n----------------------";
          cout << "\nRed or Blue Ship (r/b):: ";
      	 cin >> ship;
          if(ship != 'r'&&ship != 'b')
@@ -224,6 +247,7 @@ void attackRoller()
          cin >> def;
          if(cin.fail())
 			errorCheck(def);
+			
          accroll = rand()%20+acc;
          if(accroll<0)
 			accroll = 0;
@@ -311,6 +335,51 @@ void attackRoller()
     }while(ans =='y'||ans=='Y');
 }
 
+void declareShips(int redShips[],int redNum, int blueShips[],int blueNum)
+{
+	ofstream outRedShips,outBlueShips;
+
+    outRedShips.open("RedList.txt");
+    outBlueShips.open("BlueList.txt");
+
+	for(int i=1;i<=redNum;i++)
+		outRedShips << i << " "<< redShips[i-1] << " ";
+	for(int i=1;i<=blueNum;i++)
+		outBlueShips << i << " "<< blueShips[i-1] << " ";
+
+}
+
+void importShips (int redShips[],int &redNum,int blueShips[],int &blueNum)
+{
+	int num = 0;
+	int i = 0;
+    ifstream inRedShips,inBlueShips;
+    inRedShips.open("RedList.txt");
+    inBlueShips.open("BlueList.txt");
+    while(!inRedShips.eof())
+    {
+    	inRedShips >> num;
+    	inRedShips >> num;
+    	//cout << num << " ";//debug
+    	redShips[i] = num;
+    	//cout << "|"<<redShips[i]<<"|"; //debug
+    	i++;
+    	redNum++;
+
+	}
+	i = 0;
+	while(!inBlueShips.eof())
+    {
+    	inBlueShips >> num;
+    	inBlueShips >> num;
+    	//cout << num << " ";//debug
+    	blueShips[i] = num;
+    	//cout << "|"<<blueShips[i]<<"|"; //debug
+    	i++;
+    	blueNum++;
+	}
+}
+
 void systemGen()
 {
 	int miningCoeff,habitCoeff,planets,habitRoll,habitLimit,planet,gasRoll,moons;
@@ -320,13 +389,12 @@ void systemGen()
 	gasMax = 1000;
 	ofstream outSys;
 	outSys.open("SystemGen.txt");
-	name = systemName();
-	cout << "\n-------------------"
-		 << "\nGenerating a system"
+	name = nameGen(true);
+	cout << "\nGenerating a system"
 		 << "\nThe System of " << name;
 	outSys << "\nThe System of " << name;
 	planets = rand()%9+3;
-	cout << "\nThere are " << planets << " planets in this system";
+	cout << "\nThere are " << planets << " planets in this system"<<endl;
 	outSys << "There are " << planets << " planets in this system";
 	for(int i=1;i<=planets;i++)
 	{
@@ -338,7 +406,7 @@ void systemGen()
             habitCoeff = rand()%habitLimit+1;
             planetMass = rand()%2+0.5;
             moons = rand()%2;
-            cout << "\nPlanet " << i << " is a habitable planet"
+            cout << "\nPlanet " << i << ", " << nameGen(false)<< ", is a habitable planet"
 				 << "\nThe Habitable Coefficient is " << habitCoeff
 				 << "\nThe Mining Coefficient is " << miningCoeff
 				 << "\nThe Mass is " << planetMass << " Earths"
@@ -381,20 +449,20 @@ void systemGen()
 	}
 }
 
-string systemName()
+string nameGen(bool numeral)
 {
 	int rand1,randRun;
 	char randFirst,randLet;
 	string name;
 	stringstream ss;
-	randRun = rand()%5+3;
+	randRun = rand()%5+2;
 	randFirst = rand()%25+65;
 	ss << randFirst;
 	ss >> name;
 	for(int i=0;i<randRun;i++)
 	{
 		
-        rand1= rand()%10;
+        rand1= rand()%6;
         if(rand1==0)
             name.append("a");
         else if(rand1==1)
@@ -411,18 +479,21 @@ string systemName()
             name.append(1,randLet);
 		}
 	}
-	rand1= rand()%10;
-    if(rand1==0)
+	if(numeral)
+	{
+        rand1= rand()%10;
+    	if(rand1==0)
         name.append(" I ");
-    if(rand1==1)
+    	if(rand1==1)
         name.append(" II ");
-    if(rand1==2)
+    	if(rand1==2)
         name.append(" III ");
-    if(rand1==3)
+    	if(rand1==3)
         name.append(" IV ");
-    if(rand1==4)
+    	if(rand1==4)
         name.append(" V ");
-	cout << name;
+	}
+	//cout << name;//debug
 	return name;
 }
 
@@ -432,9 +503,9 @@ void planetGen()
     ofstream outSys;
 	outSys.open("SystemGen.txt",ios::app);
 	cout << "This planet ";
-	rand1 = rand()% 10;
-	rand2 = rand()% 10;
-	rand3 = rand()% 10;
+	rand1 = rand()% 12;//terrain
+	rand2 = rand()% 12;//population
+	rand3 = rand()% 16;//environment
 	if(rand1==0)
 	{
 		cout << "is barren, ";
@@ -485,7 +556,17 @@ void planetGen()
 		cout << "is covered in archipelagos, ";
 		outSys << "is covered in archipelagos, ";
 	}
-	
+	else if (rand1==10)
+	{
+        cout << "is covered in jungles, ";
+		outSys << "is covered in jungles, ";
+	}
+	else if (rand1==11)
+	{
+        cout << "has massive continents, ";
+		outSys << "has massive continents, ";
+	}
+	////
 	if(rand2==0)
 	{
 		cout << "populated by giant man eating arachnids, ";
@@ -536,7 +617,17 @@ void planetGen()
 		cout << "populated with self-replicating nano-machines, ";
 		outSys << "populated with self-replicating nano-machines, ";
 	}
-	
+	else if(rand2==10)
+	{
+		cout << "populated with interstellar space pirates, ";
+		outSys << "populated with interstellar space pirates, ";
+	}
+    else if(rand2==11)
+	{
+		cout << "populated by flying creatuers, ";
+		outSys << "populated by flying creatuers, ";
+	}
+	////
 	if(rand3==0)
 	{
 		cout << "and experiences fierce storms." << endl;
@@ -587,6 +678,47 @@ void planetGen()
 		cout << "and has an automated self defense network." << endl;
 		outSys << "and has an automated self defense network." << endl;
 	}
+	else if(rand3==10)
+	{
+		cout << "and has unusually low gravity." << endl;
+		outSys << "and has unusually low gravity." << endl;
+	}
+	else if(rand3==11)
+	{
+		cout << "and has unusually high gravity." << endl;
+		outSys << "and has unusually high gravity." << endl;
+	}
+	else if(rand3==12)
+	{
+		cout << "and is fairly normal." << endl;
+		outSys << "and is fairly normal." << endl;
+	}
+	else if(rand3==12)
+	{
+		cout << "and gives you an uneasy feeling." << endl;
+		outSys << "and gives you an uneasy feeling." << endl;
+	}
+	else if(rand3==13)
+	{
+		cout << "and experiences heavy seismic activity." << endl;
+		outSys << "and experiences heavy seismic activity." << endl;
+	}
+	else if(rand3==14)
+	{
+		cout << "and shows signs of a massive battle on the surface." << endl;
+		outSys << "and shows signs of a massive battle on the surface." << endl;
+	}
+	else if(rand3==15)
+	{
+		cout << "and gives you an extremely uneasy feeling. A feeling like you should leave immediately. You can feel your sins weighing you down, almost crushing you into sub-atomic particles. You try to scream but you can't." << endl;
+		outSys << "and gives you an extremely uneasy feeling. A feeling like you should leave immediately. You can feel your sins weighing you down, almost crushing you into sub-atomic particles. You try to scream but you can't." << endl;
+		rand1 = rand()%10000; //roll every day that someone is on this planet
+		if(rand1==1)
+		{
+			cout << "\n A tear in the fabric of reality opens a gate to a parallel universe. The forerunners have come. Giant beasts made from pure anti-matter claw their way out of the gate and streak towards your ship. Fortunately, since they are made of anti-matter, they disentegrate immediately upon entering our reality. Unfortunately, this results in a massive explosion that sends a shockwave throughout all known space, destroying everything in the system, as well as the fact that all planets lose 1 habitability and 1 mining coefficient. If a rocky or habital planet's mining coefficient goes to -1, it explodes violently, as well as if a habital planet's habitability goes down to 0.";
+			outSys << "\n A tear in the fabric of reality opens a gate to a parallel universe. The forerunners have come. Giant beasts made from pure anti-matter claw their way out of the gate and streak towards your ship. Fortunately, since they are made of anti-matter, they disentegrate immediately upon entering our reality. Unfortunately, this results in a massive explosion that sends a shockwave throughout all known space, destroying everything in the system, as well as the fact that all planets lose 1 habitability and 1 mining coefficient. If a rocky or habital planet's mining coefficient goes to -1, it explodes violently, as well as if a habital planet's habitability goes down to 0.";
+		}
+	}
 }
 
 void firstTimeInstallation()
@@ -611,72 +743,6 @@ void firstTimeInstallation()
         outSystem.open("SystemGen.txt");
 }
 
-void declareShips(int redShips[],int redNum, int blueShips[],int blueNum)
-{
-	ofstream outRedShips,outBlueShips;
-    
-    outRedShips.open("RedList.txt");
-    outBlueShips.open("BlueList.txt");
-    
-	for(int i=1;i<=redNum;i++)
-		outRedShips << i << " "<< redShips[i-1] << " ";
-	for(int i=1;i<=blueNum;i++)
-		outBlueShips << i << " "<< blueShips[i-1] << " ";
-	
-}
-
-void importShips (int redShips[],int &redNum,int blueShips[],int &blueNum)
-{
-	int num = 0;
-	int i = 0;
-    ifstream inRedShips,inBlueShips;
-    inRedShips.open("RedList.txt");
-    inBlueShips.open("BlueList.txt");
-    while(!inRedShips.eof())
-    {	
-    	inRedShips >> num;
-    	inRedShips >> num;
-    	//cout << num << " ";//debug
-    	redShips[i] = num;
-    	//cout << "|"<<redShips[i]<<"|"; //debug
-    	i++;
-    	redNum++;
-    	
-	}
-	i = 0;
-	while(!inBlueShips.eof())
-    {
-    	inBlueShips >> num;
-    	inBlueShips >> num;
-    	//cout << num << " ";//debug
-    	blueShips[i] = num;
-    	//cout << "|"<<blueShips[i]<<"|"; //debug
-    	i++;
-    	blueNum++;
-	}
-}
-
-void declareEconomy(double ecoList[],double pp, double gs)
-{
-	ofstream outEco;
-	outEco.open("EconomyLog.txt");
-	outEco << pp << " " << gs;
-}
-
-void importEconomy(double ecoList[])
-{
-    double num = 0;
-	int i = 0;
-	ifstream inEco;
-	inEco.open("EconomyLog.txt");
-	while(!inEco.eof())
-	{
-		inEco >> num;
-		ecoList[i] = num;
-		i++;
-	}
-}
-
 void errorCheck(int & input)
 {
 	while(cin.fail())
@@ -698,17 +764,6 @@ void errorCheck(char &input,char l1,char l2)
 	}while(input != l1&&input != l2);
 }
 
-void exitProg()
-{
-	cout << "Exiting";
-	for(int x=0;x<5;x++)
-	{
-		for (int i=0;i<100000000;i++);
-		cout << ".";
-	}
-	exit(1);
-}
-
 void resetAll()
 {
     ofstream outLog,outRedShips,outBlueShips,outEconomy,outSystem;
@@ -724,6 +779,17 @@ void resetAll()
     	outEconomy.open("EconomyLog.txt");
     	outSystem.open("SystemGen.txt");
 	}
+}
+
+void exitProg()
+{
+	cout << "\nExiting";
+	for(int x=0;x<5;x++)
+	{
+		for (int i=0;i<100000000;i++);
+		cout << ".";
+	}
+	exit(1);
 }
 /*pseudocode
 Code remembers what ships were involved, adds to array, updates file at end of execution? Done V0.3
