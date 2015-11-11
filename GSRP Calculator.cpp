@@ -3,7 +3,6 @@
 #include<fstream>
 #include<stdlib.h>
 #include<math.h>
-#include <sstream>
 
 using namespace std;
 
@@ -13,26 +12,29 @@ void importEconomy(double[]);
 void attackRoller();
 void declareShips (int[],int,int[],int);
 void importShips (int[],int&,int[],int&);
+void systemMenu();
 void systemGen();
+void apocalypseRoll();
 string nameGen(bool);
 void planetGen();
 void firstTimeInstallation();
 void errorCheck(int&);
 void errorCheck(char&,char,char);
 void exitProg();
-
 void resetAll();
-
+//Attention developers, please complete the changelog at the bottom before pushing to the repository.
 
 int main()
 {
 	int ch;
+	
 	firstTimeInstallation();
 	srand(time(NULL));
+	
 	while(true)
 	{
 		cout << "\n------------------------------------"	
-			 << "\nGalactic Nations RP Calculators V0.8"
+			 << "\nGalactic Nations RP Calculators V0.8.1"
 			 << "\n1) Economy Calculator"
 			 << "\n2) Battle Calculator"
 			 << "\n3) System Generator"
@@ -48,7 +50,7 @@ int main()
 		else if (ch == 2)
 			attackRoller();
 		else if (ch == 3)
-			systemGen();
+			systemMenu();
 		else if (ch == 4)
 			resetAll();
 		else if (ch == 5)
@@ -66,8 +68,10 @@ void economyCalc()
 	double pp, gs, pop,mod,cur,conv;
 	ofstream outEconomy;
 	ifstream inEconomy;
+	
 	outEconomy.open("EconomyLog.txt",ios::app);
 	importEconomy(economy);
+	
 	while(true)
 	{
 		cout << "\n1) Economy Calculator"
@@ -80,7 +84,7 @@ void economyCalc()
 		cout << "\n------------------------------------";
 		if(ch == 1)
 		{
-			cout << "Enter Your Current Population (Billions) :: ";
+			cout << "\nEnter Your Current Population (Billions) :: ";
 			cin >> pop;
 			cout << "Enter your modifier (Default is 10) :: ";
 			cin >> mod;
@@ -109,12 +113,11 @@ void economyCalc()
 		}
 		else if (ch == 4)
 		{
-			cout << "Enter how many GS you have :: ";
-			cin >> gs;
-			cout << "Enter how many GS = one of your race's currency :: ";
+			gs = economy[1];
+			cout << "\nEnter how many GS = one of your race's currency :: ";
 			cin >> cur;
 			conv = gs * cur;
-			cout << "Your " << gs << " Galactic Standard converts to " << conv << "Local Currency.";
+			cout << "Your " << gs << " Galactic Standard converts to " << conv << " Local Currency.";
 		}
 		else if (ch == 5)
 		{
@@ -130,6 +133,7 @@ void economyCalc()
 void declareEconomy(double ecoList[],double pp, double gs)
 {
 	ofstream outEco;
+	
 	outEco.open("EconomyLog.txt");
 	outEco << pp << " " << gs;
 }
@@ -139,7 +143,9 @@ void importEconomy(double ecoList[])
     double num = 0;
 	int i = 0;
 	ifstream inEco;
+	
 	inEco.open("EconomyLog.txt");
+	
 	while(!inEco.eof())
 	{
 		inEco >> num;
@@ -153,12 +159,13 @@ void attackRoller()
 	int acc,dmg,eva,def,accroll,dmgroll,evaroll,defroll,shp1,shp2,hp,redShipDec,blueShipDec,shpHp,shpPtr,redNum,blueNum;
     int redList[100],blueList[100];
     char ans,ship,att;
+    ofstream outLog,outRedShips,outBlueShips;
+    ifstream inLog,inRedShips,inBlueShips;
+    
     for(int i =0;i<100;i++)
 		redList[i] = 0;
 	for(int i =0;i<100;i++)
 		blueList[i] = 0;
-    ofstream outLog,outRedShips,outBlueShips;
-    ifstream inLog,inRedShips,inBlueShips;
     
 	cout << "Input New Ships?(Y/N)";
     cin >> ans;
@@ -338,15 +345,14 @@ void attackRoller()
 void declareShips(int redShips[],int redNum, int blueShips[],int blueNum)
 {
 	ofstream outRedShips,outBlueShips;
-
+	
     outRedShips.open("RedList.txt");
     outBlueShips.open("BlueList.txt");
-
+    
 	for(int i=1;i<=redNum;i++)
 		outRedShips << i << " "<< redShips[i-1] << " ";
 	for(int i=1;i<=blueNum;i++)
 		outBlueShips << i << " "<< blueShips[i-1] << " ";
-
 }
 
 void importShips (int redShips[],int &redNum,int blueShips[],int &blueNum)
@@ -354,8 +360,10 @@ void importShips (int redShips[],int &redNum,int blueShips[],int &blueNum)
 	int num = 0;
 	int i = 0;
     ifstream inRedShips,inBlueShips;
+    
     inRedShips.open("RedList.txt");
     inBlueShips.open("BlueList.txt");
+    
     while(!inRedShips.eof())
     {
     	inRedShips >> num;
@@ -380,16 +388,44 @@ void importShips (int redShips[],int &redNum,int blueShips[],int &blueNum)
 	}
 }
 
+void systemMenu()
+{
+	int ans;
+	while(true)
+	{
+		cout << "\n1) System Generator"
+			 << "\n2) Name Generator"
+			 << "\n3) Apocalypse Roller"
+			 << "\n4) Exit"
+			 << "\nPlease make your selection :: ";
+		cin >> ans;
+		if(cin.fail())
+			errorCheck(ans);
+		if(ans==1)
+			systemGen();
+		else if (ans == 2)
+			cout << "\n" << nameGen(true) << "\n";
+		else if (ans == 3)
+			apocalypseRoll();
+		else if (ans == 4)
+			exitProg();
+		else
+			cout << "Not a Valid Choice";
+	}
+}
+
 void systemGen()
 {
 	int miningCoeff,habitCoeff,planets,habitRoll,habitLimit,planet,gasRoll,moons;
 	double planetMass,gasMax,r;
 	string name;
+	
 	habitLimit = 9;
 	gasMax = 1000;
 	ofstream outSys;
 	outSys.open("SystemGen.txt");
 	name = nameGen(true);
+	
 	cout << "\nGenerating a system"
 		 << "\nThe System of " << name;
 	outSys << "\nThe System of " << name;
@@ -454,11 +490,11 @@ string nameGen(bool numeral)
 	int rand1,randRun;
 	char randFirst,randLet;
 	string name;
-	stringstream ss;
+	
 	randRun = rand()%5+2;
 	randFirst = rand()%25+65;
-	ss << randFirst;
-	ss >> name;
+    name.append(1,randFirst);
+    
 	for(int i=0;i<randRun;i++)
 	{
 		
@@ -501,11 +537,13 @@ void planetGen()
 {
 	int rand1,rand2,rand3;
     ofstream outSys;
+    
 	outSys.open("SystemGen.txt",ios::app);
 	cout << "This planet ";
 	rand1 = rand()% 12;//terrain
 	rand2 = rand()% 12;//population
 	rand3 = rand()% 16;//environment
+	////Terrain
 	if(rand1==0)
 	{
 		cout << "is barren, ";
@@ -566,7 +604,7 @@ void planetGen()
         cout << "has massive continents, ";
 		outSys << "has massive continents, ";
 	}
-	////
+	////Population
 	if(rand2==0)
 	{
 		cout << "populated by giant man eating arachnids, ";
@@ -627,7 +665,7 @@ void planetGen()
 		cout << "populated by flying creatuers, ";
 		outSys << "populated by flying creatuers, ";
 	}
-	////
+	////Environment
 	if(rand3==0)
 	{
 		cout << "and experiences fierce storms." << endl;
@@ -712,12 +750,26 @@ void planetGen()
 	{
 		cout << "and gives you an extremely uneasy feeling. A feeling like you should leave immediately. You can feel your sins weighing you down, almost crushing you into sub-atomic particles. You try to scream but you can't." << endl;
 		outSys << "and gives you an extremely uneasy feeling. A feeling like you should leave immediately. You can feel your sins weighing you down, almost crushing you into sub-atomic particles. You try to scream but you can't." << endl;
-		rand1 = rand()%10000; //roll every day that someone is on this planet
-		if(rand1==1)
-		{
-			cout << "\n A tear in the fabric of reality opens a gate to a parallel universe. The forerunners have come. Giant beasts made from pure anti-matter claw their way out of the gate and streak towards your ship. Fortunately, since they are made of anti-matter, they disentegrate immediately upon entering our reality. Unfortunately, this results in a massive explosion that sends a shockwave throughout all known space, destroying everything in the system, as well as the fact that all planets lose 1 habitability and 1 mining coefficient. If a rocky or habital planet's mining coefficient goes to -1, it explodes violently, as well as if a habital planet's habitability goes down to 0.";
-			outSys << "\n A tear in the fabric of reality opens a gate to a parallel universe. The forerunners have come. Giant beasts made from pure anti-matter claw their way out of the gate and streak towards your ship. Fortunately, since they are made of anti-matter, they disentegrate immediately upon entering our reality. Unfortunately, this results in a massive explosion that sends a shockwave throughout all known space, destroying everything in the system, as well as the fact that all planets lose 1 habitability and 1 mining coefficient. If a rocky or habital planet's mining coefficient goes to -1, it explodes violently, as well as if a habital planet's habitability goes down to 0.";
-		}
+		apocalypseRoll();
+	}
+}
+
+void apocalypseRoll()
+{
+	ofstream outSys;
+	int rand1;
+	
+	outSys.open("SystemLog.txt",ios::app);
+	rand1 = rand()%10000; //roll every day that someone is on this planet
+	
+	cout << "\n----------------------"
+		 << "\nRolling..."
+		 << "\nRoll was :: " << rand1
+		 << "\n----------------------";
+	if(rand1==1)
+	{
+		cout << "\n A tear in the fabric of reality opens a gate to a parallel universe. The forerunners have come. Giant beasts made from pure anti-matter claw their way out of the gate and streak towards your ship. Fortunately, since they are made of anti-matter, they disentegrate immediately upon entering our reality. Unfortunately, this results in a massive explosion that sends a shockwave throughout all known space, destroying everything in the system, as well as the fact that all planets lose 1 habitability and 1 mining coefficient. If a rocky or habital planet's mining coefficient goes to -1, it explodes violently, as well as if a habital planet's habitability goes down to 0.";
+		outSys << "\n A tear in the fabric of reality opens a gate to a parallel universe. The forerunners have come. Giant beasts made from pure anti-matter claw their way out of the gate and streak towards your ship. Fortunately, since they are made of anti-matter, they disentegrate immediately upon entering our reality. Unfortunately, this results in a massive explosion that sends a shockwave throughout all known space, destroying everything in the system, as well as the fact that all planets lose 1 habitability and 1 mining coefficient. If a rocky or habital planet's mining coefficient goes to -1, it explodes violently, as well as if a habital planet's habitability goes down to 0.";
 	}
 }
 
@@ -769,7 +821,7 @@ void resetAll()
     ofstream outLog,outRedShips,outBlueShips,outEconomy,outSystem;
 	char ans;
 
-	cout << "Are you sure?(Y/N) :: ";
+	cout << "\nAre you sure?(Y/N) :: ";
 	cin >> ans;
 	if(ans == 'Y' || ans == 'y')
 	{
@@ -778,6 +830,7 @@ void resetAll()
     	outBlueShips.open("BlueList.txt");
     	outEconomy.open("EconomyLog.txt");
     	outSystem.open("SystemGen.txt");
+    	cout << "\nAll data reset successfully";
 	}
 }
 
@@ -791,9 +844,65 @@ void exitProg()
 	}
 	exit(1);
 }
-/*pseudocode
+/*TODO
 Code remembers what ships were involved, adds to array, updates file at end of execution? Done V0.3
 Code reads and writes economy to a master file for record keeping. Done Vol 0.7
+Menu for System Generation & related. Done Vol 0.8
+More planet gen/scenarios (Includes more apocalyptic events).
+*/
+
+/*Changelog	
+11/10/15 : V0.8.1
+	- Added System Menu
+	- Added a few more planet gen scenarios
+	- Changed FUN.
+	- Documentation
+	- Optimization
+	
+11/08/15: V0.8
+    - Modified System Gen
+    - Added FUN.
+
+11/06/15 : V0.7.1
+    - Planet Generator Fixes
+    - Heavy Economy Changes
+    - EconomyLog Keeps Track of Cycles
+    - Balance changes
+    - Factory Reset Button
+    - Optimization
+        - Hotfix to turn off debugging tools left on         
+
+11/05/15 : V0.6
+    - Planet Generator
+    - Name Generator
+
+11/05/15 : V0.5.1
+    - First Time Installation
+    - Bugs Fixed
+    - Optimization
+        - Hotfix for Version # and Optimization
+
+11/05/15 : V0.4
+    - Optimization
+
+11/05/15 : V0.3
+	- Menu Added
+    	- Economy and Battle System Menus
+	- Economy Calculator Added
+    	- PP Calculator
+    	- GS Calculator
+    	- Currency Conversion
+	- Battle System Refined
+    	- Allows the importation of fleets
+    	- Reads and Writes to RedShips and BlueShips
+    	- Saves status if crashes
+    	- Updates without closing the program
+
+11/03/15 : V0.1
+    - Battle System created.
+    - Exports battle log
+    - Basic battle functionality available.
+    - Uses 1d20 rolls, may allow different dice rolls later. 
 */
 
 //Copyright 2015 Auragon Studios
